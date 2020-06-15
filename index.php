@@ -3,7 +3,7 @@ function main(array $args) : array {
 
     require 'config.php';
 
-    if (! array_key_exists("dbname", $args) || ! array_key_exists("dbuser", $args) || ! array_key_exists("dbpass", $args)) {
+    if (! array_key_exists("dbtype", $args) || ! array_key_exists("dbname", $args) || ! array_key_exists("dbuser", $args) || ! array_key_exists("dbpass", $args)) {
         $json_result = json_decode($emptyForm);
         print_r($json_result);
         return array("body" => $json_result);
@@ -13,9 +13,6 @@ function main(array $args) : array {
     if (! array_key_exists("dbhost", $args)) {
         $args['dbhost'] = "localhost";
     } 
-    if (! array_key_exists("dbport", $args)) {
-        $args['dbport'] = "5432";
-    }
 
     $dsn = sprintf("pgsql:host=%s port=%d dbname=%s user=%s password=%s",
                       $args['dbhost'],
@@ -25,7 +22,13 @@ function main(array $args) : array {
                       $args['dbpass']);
   
     try {
-        $connection = new PDO($dsn);
+        if ($args['dbtype'] == "mysql") {
+            // can't get mysql pdo working in a different way :(
+            $connection = new PDO ("mysql:host=$args[dbhost];dbname=$args[dbname]", $args['dbuser'], $args['dbpass']);
+        } else {
+            $connection = new PDO($dsn);
+        }
+
         $sth = $connection->prepare("SELECT 0 AS amount,
                                         scadenza AS due_date,
                                         destinatario AS fiscal_code,
