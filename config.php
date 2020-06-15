@@ -5,7 +5,13 @@
         {
             "type": "message",
             "name": "note",
-            "description": "Connect to postgres db to import messages"
+            "description": "Connect to db (mysql or postgres) to import messages"
+        },
+        {
+            "name": "dbtype",
+            "description": "Use mysql or pgsql",
+            "type": "string",
+            "required": true
         },
         {
             "name": "dbhost",
